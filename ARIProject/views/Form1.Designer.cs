@@ -164,7 +164,8 @@ namespace ARIProject
             // 
             this.rTxtResult.Location = new System.Drawing.Point(12, 707);
             this.rTxtResult.Name = "rTxtResult";
-            this.rTxtResult.Size = new System.Drawing.Size(405, 351);
+            this.rTxtResult.ReadOnly = true;
+            this.rTxtResult.Size = new System.Drawing.Size(405, 311);
             this.rTxtResult.TabIndex = 19;
             this.rTxtResult.Text = "";
             // 
@@ -172,6 +173,7 @@ namespace ARIProject
             // 
             this.fileContent.Location = new System.Drawing.Point(12, 164);
             this.fileContent.Name = "fileContent";
+            this.fileContent.ReadOnly = true;
             this.fileContent.Size = new System.Drawing.Size(405, 208);
             this.fileContent.TabIndex = 18;
             this.fileContent.Text = "";
@@ -191,6 +193,7 @@ namespace ARIProject
             // 
             this.txtDestinyRoute.Location = new System.Drawing.Point(11, 411);
             this.txtDestinyRoute.Name = "txtDestinyRoute";
+            this.txtDestinyRoute.ReadOnly = true;
             this.txtDestinyRoute.Size = new System.Drawing.Size(325, 23);
             this.txtDestinyRoute.TabIndex = 16;
             // 
@@ -229,6 +232,7 @@ namespace ARIProject
             // 
             this.txtOriginRoute.Location = new System.Drawing.Point(12, 125);
             this.txtOriginRoute.Name = "txtOriginRoute";
+            this.txtOriginRoute.ReadOnly = true;
             this.txtOriginRoute.Size = new System.Drawing.Size(324, 23);
             this.txtOriginRoute.TabIndex = 12;
             // 

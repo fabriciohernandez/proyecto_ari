@@ -1,4 +1,5 @@
-﻿using ARIProject.models;
+﻿using ARIProject.controllers;
+using ARIProject.models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,20 +34,28 @@ namespace ARIProject
         private void btnOriginSearchRoute_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "TXT files|*.txt";
+            openFileDialog.Filter = "Text Files| *.txt;*.xml;*.json";
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string selectedFile = openFileDialog.FileName;
                 if (selectedFile != null)
                 {
-                   
+                    //Clean all fields
+                    ClearAllFields();
+                    //If json or xml selected we need to hide cmb file type, because the result is txt
+                    var fileType = Tools.GetFileType(selectedFile);
+                    if (fileType.Equals("xml") || fileType.Equals("json"))
+                    {
+                        cmbFileType.Enabled = false;
+                        cmbFileType.Text = "TXT";
+                    }
+
                     txtOriginRoute.Text = selectedFile;
                     fileLines = File.ReadAllLines(selectedFile);
                     for (int i = 0; i < fileLines.Length; i++)
                     {
                         fileContent.Text = fileContent.Text + fileLines[i] + "\n";
-                        
                     }
                 }
             }
@@ -55,16 +64,14 @@ namespace ARIProject
         private void btnDestinySearchRoute_Click(object sender, EventArgs e)
         {
 
-            SaveFileDialog openFileDialog = new SaveFileDialog();
-            openFileDialog.Title = "Guarda el resultado generado";
+            FolderBrowserDialog openFileDialog = new FolderBrowserDialog();
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                string selectedFile = openFileDialog.FileName;
-                if (selectedFile != null)
+                string selectedPath = openFileDialog.SelectedPath;
+                if (selectedPath != null)
                 {
-                   txtDestinyRoute.Text = selectedFile;
-                   
+                    txtDestinyRoute.Text = selectedPath;
                 }
             }
         }
@@ -77,26 +84,29 @@ namespace ARIProject
             //Validating Entrys
             if (ValidateEntrys())
             {
-                MessageBox.Show("todo good");
-                clients.Clear();
-                for (int i = 0; i < fileLines.Length; i++)
+                switch (Tools.GetFileType(txtOriginRoute.Text))
                 {
-                    var att = fileLines[i].Split(cmbDeli.Text);
-                    clients.Add(new Client(att[0], att[1], att[2], att[3], att[4], att[5]));
+                    case "txt":
+                        //Verify file to generate
+                        if (cmbFileType.SelectedIndex == 0)
+                        {
+                            GenerateJSON();
+                        }
+                        else
+                        {
+                            GenerateXML();
+                        }
 
-                }
-                if (cmbFileType.SelectedIndex == 0)
-                {
-                    var options = new JsonSerializerOptions()
-                    {
-                        WriteIndented = true
-                    };
-                    var json = "[";
-                    foreach (Client client in clients)
-                    {
-                        json = json + ",\n" + JsonSerializer.Serialize(client,options);
-                    }
-                    rTxtResult.Text = json + "\n ]";
+                        break;
+                    case "json":
+                        GenerateTxtByJson();
+                        break;
+                    case "xml":
+                        GenerateTxtByXml();
+                        break;
+                    default:
+                        MessageBox.Show("Archivo seleccionado no soportado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        break;
                 }
 
             }
@@ -106,6 +116,45 @@ namespace ARIProject
                 MessageBox.Show("Por favor complete todos los campos obligatorios.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ResaltErrorsFields();
             }
+        }
+
+        private void GenerateJSON()
+        {
+            clients.Clear();
+            for (int i = 0; i < fileLines.Length; i++)
+            {
+                var att = fileLines[i].Split(cmbDeli.Text);
+                clients.Add(new Client(att[0], att[1], att[2], att[3], att[4], att[5]));
+
+            }
+            var options = new JsonSerializerOptions()
+            {
+                WriteIndented = true
+            };
+            var json = "[";
+            foreach (Client client in clients)
+            {
+                json = json + ",\n" + JsonSerializer.Serialize(client, options);
+            }
+            rTxtResult.Text = json + "\n ]";
+        }
+
+        private void GenerateXML()
+        {
+            //TO DO
+            MessageBox.Show("Pendiente de implementacion GenerateXML", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void GenerateTxtByJson()
+        {
+            //TO DO
+            MessageBox.Show("Pendiente de implementacion GenerateTxtByJson", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void GenerateTxtByXml()
+        {
+            //TO DO
+            MessageBox.Show("Pendiente de implementacion GenerateTxtByXml", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private bool ValidateEntrys()
@@ -151,6 +200,15 @@ namespace ARIProject
             lblTitleKey.ForeColor = Color.Black;
         }
 
-       
+        private void ClearAllFields()
+        {
+            fileContent.Clear();
+            txtDestinyRoute.Clear();
+            cmbDeli.Text = "";
+            cmbFileType.Text = "";
+            txtKey.Clear();
+        }
+
+
     }
 }
