@@ -39,7 +39,7 @@ namespace ARIProject
             this.cmbFileType = new System.Windows.Forms.ComboBox();
             this.lblResultTitle = new System.Windows.Forms.Label();
             this.rTxtResult = new System.Windows.Forms.RichTextBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.fileContent = new System.Windows.Forms.RichTextBox();
             this.btnDestinySearchRoute = new System.Windows.Forms.Button();
             this.txtDestinyRoute = new System.Windows.Forms.TextBox();
             this.btnOriginSearchRoute = new System.Windows.Forms.Button();
@@ -63,7 +63,7 @@ namespace ARIProject
             this.body.Controls.Add(this.cmbFileType);
             this.body.Controls.Add(this.lblResultTitle);
             this.body.Controls.Add(this.rTxtResult);
-            this.body.Controls.Add(this.richTextBox1);
+            this.body.Controls.Add(this.fileContent);
             this.body.Controls.Add(this.btnDestinySearchRoute);
             this.body.Controls.Add(this.txtDestinyRoute);
             this.body.Controls.Add(this.btnOriginSearchRoute);
@@ -168,13 +168,13 @@ namespace ARIProject
             this.rTxtResult.TabIndex = 19;
             this.rTxtResult.Text = "";
             // 
-            // richTextBox1
+            // fileContent
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(12, 164);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(405, 208);
-            this.richTextBox1.TabIndex = 18;
-            this.richTextBox1.Text = "";
+            this.fileContent.Location = new System.Drawing.Point(12, 164);
+            this.fileContent.Name = "fileContent";
+            this.fileContent.Size = new System.Drawing.Size(405, 208);
+            this.fileContent.TabIndex = 18;
+            this.fileContent.Text = "";
             // 
             // btnDestinySearchRoute
             // 
@@ -274,7 +274,7 @@ namespace ARIProject
         private System.Windows.Forms.Panel body;
         private System.Windows.Forms.Label lblResultTitle;
         private System.Windows.Forms.RichTextBox rTxtResult;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox fileContent;
         private System.Windows.Forms.Button btnDestinySearchRoute;
         private System.Windows.Forms.TextBox txtDestinyRoute;
         private System.Windows.Forms.Button btnOriginSearchRoute;

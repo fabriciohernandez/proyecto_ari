@@ -1,10 +1,13 @@
-﻿using System;
+﻿using ARIProject.models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -12,6 +15,11 @@ namespace ARIProject
 {
     public partial class Form1 : Form
     {
+        private string fileType;
+        private List<Client> clients = new List<Client>();
+        string[] fileLines;
+
+
         public Form1()
         {
             InitializeComponent();
@@ -25,14 +33,21 @@ namespace ARIProject
         private void btnOriginSearchRoute_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Text|*.txt|*.*";
+            openFileDialog.Filter = "TXT files|*.txt";
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string selectedFile = openFileDialog.FileName;
                 if (selectedFile != null)
                 {
+                   
                     txtOriginRoute.Text = selectedFile;
+                    fileLines = File.ReadAllLines(selectedFile);
+                    for (int i = 0; i < fileLines.Length; i++)
+                    {
+                        fileContent.Text = fileContent.Text + fileLines[i] + "\n";
+                        
+                    }
                 }
             }
         }
@@ -48,7 +63,8 @@ namespace ARIProject
                 string selectedFile = openFileDialog.FileName;
                 if (selectedFile != null)
                 {
-                    txtDestinyRoute.Text = selectedFile;
+                   txtDestinyRoute.Text = selectedFile;
+                   
                 }
             }
         }
@@ -62,6 +78,27 @@ namespace ARIProject
             if (ValidateEntrys())
             {
                 MessageBox.Show("todo good");
+                clients.Clear();
+                for (int i = 0; i < fileLines.Length; i++)
+                {
+                    var att = fileLines[i].Split(cmbDeli.Text);
+                    clients.Add(new Client(att[0], att[1], att[2], att[3], att[4], att[5]));
+
+                }
+                if (cmbFileType.SelectedIndex == 0)
+                {
+                    var options = new JsonSerializerOptions()
+                    {
+                        WriteIndented = true
+                    };
+                    var json = "[";
+                    foreach (Client client in clients)
+                    {
+                        json = json + ",\n" + JsonSerializer.Serialize(client,options);
+                    }
+                    rTxtResult.Text = json + "\n ]";
+                }
+
             }
             else
             {
@@ -113,5 +150,7 @@ namespace ARIProject
             lblTitleDeli.ForeColor = Color.Black;
             lblTitleKey.ForeColor = Color.Black;
         }
+
+       
     }
 }
