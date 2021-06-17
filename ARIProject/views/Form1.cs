@@ -207,6 +207,7 @@ namespace ARIProject
             cmbDeli.Text = "";
             cmbFileType.Text = "";
             txtKey.Clear();
+            cmbFileType.Enabled = true;
         }
 
 
