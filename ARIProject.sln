@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31410.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARIProject", "ARIProject\ARIProject.csproj", "{989226F2-5924-44B1-8589-96FDC12B7996}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{989226F2-5924-44B1-8589-96FDC12B7996}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{989226F2-5924-44B1-8589-96FDC12B7996}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{989226F2-5924-44B1-8589-96FDC12B7996}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{989226F2-5924-44B1-8589-96FDC12B7996}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {44B84197-51EC-485E-ADAA-EFD39EC746BC}
+	EndGlobalSection
+EndGlobal
