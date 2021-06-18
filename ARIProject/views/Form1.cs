@@ -1,5 +1,6 @@
 ﻿using ARIProject.controllers;
 using ARIProject.models;
+using Soft = Newtonsoft.Json;
 using JWT.Algorithms;
 using JWT.Builder;
 using System;
@@ -51,6 +52,8 @@ namespace ARIProject
                     {
                         cmbFileType.Enabled = false;
                         cmbFileType.Text = "TXT";
+                        txtKey.Enabled = false;
+                        txtKey.Text = "No necesario";
                     }
 
                     txtOriginRoute.Text = selectedFile;
@@ -249,8 +252,70 @@ namespace ARIProject
 
         private void GenerateTxtByJson()
         {
-            //TO DO
-            MessageBox.Show("Pendiente de implementacion GenerateTxtByJson", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            try
+            {
+                using (StreamReader r = new StreamReader(txtOriginRoute.Text))
+                {
+                    string json = r.ReadToEnd();
+                    clients.Clear();
+                    clients = Soft.JsonConvert.DeserializeObject<List<Client>>(json);
+                    txtDestinyRoute.Text += "/jsonToTxtResult.txt";
+                    //Creating file
+                    if (File.Exists(txtDestinyRoute.Text))
+                    {
+                        DialogResult dialogResult = MessageBox.Show("El archivo ya ha sido generado con anterioridad en la misma ruta ¿desea reemplazarlo?", "Advertencia", MessageBoxButtons.YesNo);
+                        if (dialogResult == DialogResult.Yes)
+                        {
+                            File.Delete(txtDestinyRoute.Text);
+                        }
+                        else
+                        {
+                            Random _random = new Random();
+                            txtDestinyRoute.Text = Tools.RemoveFileExtension(txtDestinyRoute.Text);
+                            txtDestinyRoute.Text += _random.Next(1, 1000) + ".txt";                                  
+                        }
+                       
+                    }
+
+                    // Create a new file     
+                    using (FileStream fs = File.Create(txtDestinyRoute.Text))
+                    {
+                        // Add some text to file    
+                        foreach (Client element in clients)
+                        {
+                            String clientText = element.documento
+                                + cmbDeli.Text
+                                + element.primer_nombre
+                                + cmbDeli.Text
+                                + element.apellido
+                                + cmbDeli.Text
+                                + element.credit_card
+                                + cmbDeli.Text
+                                + element.tipo
+                                + cmbDeli.Text
+                                + element.telefono
+                                + "\n";
+
+                            Byte[] text = new UTF8Encoding(true).GetBytes(clientText);
+                            fs.Write(text, 0, text.Length);
+
+                        }
+                    }
+                }      
+                MessageBox.Show("Archivo generado exitosamente y se ha guardado en: " + txtDestinyRoute.Text, "Exito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                fileLines = File.ReadAllLines(txtDestinyRoute.Text);
+                for (int i = 0; i < fileLines.Length; i++)
+                {
+                    rTxtResult.Text = rTxtResult.Text + fileLines[i] + "\n";
+                }
+                ClearAllFields();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Lo sentimos, ha ocurrido un error inesperado al tratar de generar el archivo de texto.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                
+            }
+            
         }
 
         private void GenerateTxtByXml()
