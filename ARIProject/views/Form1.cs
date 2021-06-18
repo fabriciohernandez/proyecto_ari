@@ -201,6 +201,11 @@ namespace ARIProject
                     }
                 }      
                 MessageBox.Show("Archivo generado exitosamente y se ha guardado en: " + txtDestinyRoute.Text, "Exito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                fileLines = File.ReadAllLines(txtDestinyRoute.Text);
+                for (int i = 0; i < fileLines.Length; i++)
+                {
+                    rTxtResult.Text = rTxtResult.Text + fileLines[i] + "\n";
+                }
                 ClearAllFields();
             }
             catch (Exception)
