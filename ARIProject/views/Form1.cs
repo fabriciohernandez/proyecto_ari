@@ -168,7 +168,7 @@ namespace ARIProject
         private void GenerateJWT()
         {
             clients = new List<Client>();
-            string path = txtDestinyRoute.Text + @"\JWTGenerated.txt";
+            string path = txtDestinyRoute.Text + @"\JsonJwtGenerated.json";
             for (int i = 0; i < fileLines.Length; i++)
             {
                 var att = fileLines[i].Split(cmbDeli.Text);
@@ -176,15 +176,16 @@ namespace ARIProject
 
             }
 
-            var json = "";
+            var json = "[";
             foreach (Client client in clients)
             {
                 // json = json + ",\n" + JsonSerializer.Serialize(client, options);
-                if(json != "")
-                   json = json + cmbDeli.Text +"\n"+ GenerateAccessToken(client);
+                if(json != "[")
+                   json = json + "\n,{"+ GenerateAccessToken(client)+"}";
                 else
                     json = json + GenerateAccessToken(client);
             }
+            json = json + "\n]";
             rTxtResult.Text = json;
             Console.WriteLine(path);
             if(File.Exists(path))
