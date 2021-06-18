@@ -127,7 +127,7 @@ namespace ARIProject
         private void GenerateJSONByJwT()
         {
             clients = new List<Client>();
-            string path = txtDestinyRoute.Text + @"\JSONGenerated.txt";
+            string path = txtDestinyRoute.Text + @"\JSONGenerated.json";
             var json = "[";
             for (int i = 0; i < fileLines.Length; i++)
             {
@@ -232,14 +232,12 @@ namespace ARIProject
         }
 
         private string VerifyToken(string token)
-        {
-            
+        { 
                 return new JwtBuilder()
                     .WithAlgorithm(new HMACSHA256Algorithm())
                      .WithSecret(txtKey.Text)
                      .MustVerifySignature()
-                     .Decode(token);
-            
+                     .Decode(token);      
        }
            
 
