@@ -1,5 +1,7 @@
 ﻿using ARIProject.controllers;
 using ARIProject.models;
+using JWT.Algorithms;
+using JWT.Builder;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -90,7 +92,11 @@ namespace ARIProject
                         //Verify file to generate
                         if (cmbFileType.SelectedIndex == 0)
                         {
-                            GenerateJSON();
+                            GenerateJSONByJwT();
+                        }
+                        else if (cmbFileType.SelectedIndex == 1)
+                        {
+                            GenerateJWT();
                         }
                         else
                         {
@@ -118,15 +124,85 @@ namespace ARIProject
             }
         }
 
-        private void GenerateJSON()
+        private void GenerateJSONByJwT()
         {
-            clients.Clear();
+            clients = new List<Client>();
+            string path = txtDestinyRoute.Text + @"\JSONGenerated.txt";
+            var json = "[";
+            for (int i = 0; i < fileLines.Length; i++)
+            {
+                var token = fileLines[i].Split(cmbDeli.Text);
+                try
+                {
+                    if (json != "[")
+                        json = json + "\n," + VerifyToken(token[0]);
+                    else
+                        json = json + "\n" + VerifyToken(token[0]);
+                }
+                catch
+                {
+                    MessageBox.Show("Clave incorrecta.");
+                    return;
+                }
+            }
+            json = json + "\n]";
+            rTxtResult.Text = json;
+            if (File.Exists(path))
+            {
+                DialogResult dialogResult = MessageBox.Show("El archivo ya existe", "Desea reemplazarlo?", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    File.WriteAllText(path, json);
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    //do something else
+                }
+            }
+            else
+                File.WriteAllText(path, json);
+
+
+        }
+
+        private void GenerateJWT()
+        {
+            clients = new List<Client>();
+            string path = txtDestinyRoute.Text + @"\JWTGenerated.txt";
             for (int i = 0; i < fileLines.Length; i++)
             {
                 var att = fileLines[i].Split(cmbDeli.Text);
                 clients.Add(new Client(att[0], att[1], att[2], att[3], att[4], att[5]));
 
             }
+
+            var json = "";
+            foreach (Client client in clients)
+            {
+                // json = json + ",\n" + JsonSerializer.Serialize(client, options);
+                if(json != "")
+                   json = json + cmbDeli.Text +"\n"+ GenerateAccessToken(client);
+                else
+                    json = json + GenerateAccessToken(client);
+            }
+            rTxtResult.Text = json;
+            Console.WriteLine(path);
+            if(File.Exists(path))
+            {
+                DialogResult dialogResult = MessageBox.Show("El archivo ya existe", "Desea reemplazarlo?", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    File.WriteAllText(path, json);
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    //do something else
+                }
+            }
+            else
+                File.WriteAllText(path, json);
+
+            /*
             var options = new JsonSerializerOptions()
             {
                 WriteIndented = true
@@ -137,7 +213,35 @@ namespace ARIProject
                 json = json + ",\n" + JsonSerializer.Serialize(client, options);
             }
             rTxtResult.Text = json + "\n ]";
+            */
         }
+
+
+        private string GenerateAccessToken(Client client)
+        {
+            return new JwtBuilder()
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(Encoding.ASCII.GetBytes(txtKey.Text))
+                .AddClaim("documento", client.documento)
+                .AddClaim("primer-nombre", client.primer_nombre)
+                .AddClaim("apellido", client.apellido)
+                .AddClaim("credit-card", client.credit_card)
+                .AddClaim("tipo", client.tipo)
+                .AddClaim("telefono", client.telefono)
+                .Encode();
+        }
+
+        private string VerifyToken(string token)
+        {
+            
+                return new JwtBuilder()
+                    .WithAlgorithm(new HMACSHA256Algorithm())
+                     .WithSecret(txtKey.Text)
+                     .MustVerifySignature()
+                     .Decode(token);
+            
+       }
+           
 
         private void GenerateXML()
         {

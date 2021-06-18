@@ -143,6 +143,8 @@ namespace ARIProject
             this.cmbFileType.FormattingEnabled = true;
             this.cmbFileType.Items.AddRange(new object[] {
             "JSON",
+            "JWT",
+            "TXT",
             "XML"});
             this.cmbFileType.Location = new System.Drawing.Point(11, 467);
             this.cmbFileType.Name = "cmbFileType";
