@@ -5,14 +5,9 @@ using JWT.Algorithms;
 using JWT.Builder;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ARIProject
@@ -144,7 +139,7 @@ namespace ARIProject
                 }
                 catch
                 {
-                    MessageBox.Show("Clave incorrecta.");
+                    MessageBox.Show("Clave incorrecta.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }
@@ -152,15 +147,12 @@ namespace ARIProject
             rTxtResult.Text = json;
             if (File.Exists(path))
             {
-                DialogResult dialogResult = MessageBox.Show("El archivo ya existe", "Desea reemplazarlo?", MessageBoxButtons.YesNo);
+                DialogResult dialogResult = MessageBox.Show("El archivo ya existe", "¿Desea reemplazarlo?", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
                     File.WriteAllText(path, json);
                 }
-                else if (dialogResult == DialogResult.No)
-                {
-                    //do something else
-                }
+
             }
             else
                 File.WriteAllText(path, json);
@@ -183,14 +175,14 @@ namespace ARIProject
             foreach (Client client in clients)
             {
                 // json = json + ",\n" + JsonSerializer.Serialize(client, options);
-                if(json != "")
-                   json = json + cmbDeli.Text +"\n"+ GenerateAccessToken(client);
+                if (json != "")
+                    json = json + cmbDeli.Text + "\n" + GenerateAccessToken(client);
                 else
                     json = json + GenerateAccessToken(client);
             }
             rTxtResult.Text = json;
             Console.WriteLine(path);
-            if(File.Exists(path))
+            if (File.Exists(path))
             {
                 DialogResult dialogResult = MessageBox.Show("El archivo ya existe", "Desea reemplazarlo?", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
@@ -204,19 +196,6 @@ namespace ARIProject
             }
             else
                 File.WriteAllText(path, json);
-
-            /*
-            var options = new JsonSerializerOptions()
-            {
-                WriteIndented = true
-            };
-            var json = "[";
-            foreach (Client client in clients)
-            {
-                json = json + ",\n" + JsonSerializer.Serialize(client, options);
-            }
-            rTxtResult.Text = json + "\n ]";
-            */
         }
 
 
@@ -235,14 +214,14 @@ namespace ARIProject
         }
 
         private string VerifyToken(string token)
-        { 
-                return new JwtBuilder()
-                    .WithAlgorithm(new HMACSHA256Algorithm())
-                     .WithSecret(txtKey.Text)
-                     .MustVerifySignature()
-                     .Decode(token);      
-       }
-           
+        {
+            return new JwtBuilder()
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                 .WithSecret(txtKey.Text)
+                 .MustVerifySignature()
+                 .Decode(token);
+        }
+
 
         private void GenerateXML()
         {
@@ -272,9 +251,9 @@ namespace ARIProject
                         {
                             Random _random = new Random();
                             txtDestinyRoute.Text = Tools.RemoveFileExtension(txtDestinyRoute.Text);
-                            txtDestinyRoute.Text += _random.Next(1, 1000) + ".txt";                                  
+                            txtDestinyRoute.Text += _random.Next(1, 1000) + ".txt";
                         }
-                       
+
                     }
 
                     // Create a new file     
@@ -301,7 +280,7 @@ namespace ARIProject
 
                         }
                     }
-                }      
+                }
                 MessageBox.Show("Archivo generado exitosamente y se ha guardado en: " + txtDestinyRoute.Text, "Exito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 fileLines = File.ReadAllLines(txtDestinyRoute.Text);
                 for (int i = 0; i < fileLines.Length; i++)
@@ -313,9 +292,9 @@ namespace ARIProject
             catch (Exception)
             {
                 MessageBox.Show("Lo sentimos, ha ocurrido un error inesperado al tratar de generar el archivo de texto.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
+
             }
-            
+
         }
 
         private void GenerateTxtByXml()
