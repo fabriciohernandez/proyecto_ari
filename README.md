@@ -38,3 +38,10 @@ a la mano).
 
 Esta versión es la última de momento, sin embargo no se descarta la posibilidad que pueda 
 ser actualizado y mejorado en un futuro.
+
+Integrantes:
+
+Fabricio Enrique Hernández López 	00163217
+José David Mejía Segura 			00001617
+Luis Eduardo Cortez Murillo 			00029117
+Miguel Ernesto González Yanes 		00145016
