@@ -23,6 +23,7 @@ namespace ARIProject
         char[] resultado; //resultado cifrado
         char[,] matriz;
         char[] cifrado;
+        char[] descifrado;
 
 
         public Form1()
@@ -404,6 +405,23 @@ namespace ARIProject
             }
 
             resultado = cifrado;
+        }
+        public void descifrar()
+        {
+            descifrado = new char[mensaje.Length];
+            int aux = 0;
+            for (int cont = 0; cont < mensaje.Length; cont++)
+            {
+                aux = (this.mensaje[cont] - this.clave[cont]);
+                if (aux < 0)
+                {
+                    aux = aux + 10 * 1;
+                }
+                descifrado[cont] = (char)(aux + 48);
+
+            }
+            resultadoDes = descifrado;
+
         }
         private char[,] generarMatrizNum()
         {
