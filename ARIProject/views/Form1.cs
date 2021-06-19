@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace ARIProject
 {
@@ -43,14 +44,30 @@ namespace ARIProject
                     ClearAllFields();
                     //If json or xml selected we need to hide cmb file type, because the result is txt
                     var fileType = Tools.GetFileType(selectedFile);
-                    if (fileType.Equals("xml") || fileType.Equals("json"))
+                    if (fileType.Equals("xml"))
                     {
                         cmbFileType.Enabled = false;
-                        cmbFileType.Text = "TXT";
+                        cmbFileType.SelectedIndex = 3;
                         txtKey.Enabled = false;
                         txtKey.Text = "No necesario";
                     }
+                   else if(fileType.Equals("json"))
+                    {
+                        cmbFileType.Enabled = false;
+                        cmbFileType.SelectedIndex = 0;
+                        txtKey.Enabled = true;
+                        cmbDeli.Enabled = false;
+                        cmbDeli.Text = "No necesario";
 
+                    }
+                    else
+                    {
+                        cmbFileType.Enabled = true;
+                        txtKey.Enabled = true;
+                        txtKey.Clear();
+                        cmbDeli.Enabled = true;
+                        cmbDeli.SelectedItem = 0;
+                    }
                     txtOriginRoute.Text = selectedFile;
                     fileLines = File.ReadAllLines(selectedFile);
                     for (int i = 0; i < fileLines.Length; i++)
@@ -88,11 +105,8 @@ namespace ARIProject
                 {
                     case "txt":
                         //Verify file to generate
-                        if (cmbFileType.SelectedIndex == 0)
-                        {
-                            GenerateJSONByJwT();
-                        }
-                        else if (cmbFileType.SelectedIndex == 1)
+                       
+                        if (cmbFileType.SelectedIndex == 1)
                         {
                             GenerateJWT();
                         }
@@ -103,7 +117,12 @@ namespace ARIProject
 
                         break;
                     case "json":
-                        GenerateTxtByJson();
+                        if (cmbFileType.SelectedIndex == 0)
+                        {
+                            GenerateJSONByJwT();
+                        }
+                        else
+                            GenerateTxtByJson();
                         break;
                     case "xml":
                         GenerateTxtByXml();
@@ -124,46 +143,62 @@ namespace ARIProject
 
         private void GenerateJSONByJwT()
         {
-            clients = new List<Client>();
-            string path = txtDestinyRoute.Text + @"\JSONGenerated.json";
-            var json = "[";
-            for (int i = 0; i < fileLines.Length; i++)
+            try
             {
-                var token = fileLines[i].Split(cmbDeli.Text);
-                try
+                using (StreamReader r = new StreamReader(txtOriginRoute.Text))
                 {
-                    if (json != "[")
-                        json = json + "\n," + VerifyToken(token[0]);
+
+                    var clientsData = new List<Token>();
+                    string path = txtDestinyRoute.Text + @"\JSONGenerated.json";
+                    string json = r.ReadToEnd();
+                    MessageBox.Show(json);
+                    clientsData = Soft.JsonConvert.DeserializeObject<List<Token>>(json);
+                   
+                    var jsonGen = "[";
+                    foreach (Token token in clientsData)
+                    {
+                        
+                        try
+                        {
+                            if (jsonGen != "[")
+                                jsonGen = jsonGen + "\n," + VerifyToken(token.cliente);
+                            else
+                                jsonGen = jsonGen + "\n" + VerifyToken(token.cliente);
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Clave incorrecta.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                    jsonGen = jsonGen + "\n]";
+                    rTxtResult.Text = jsonGen;
+                    if (File.Exists(path))
+                    {
+                        DialogResult dialogResult = MessageBox.Show("El archivo ya existe", "¿Desea reemplazarlo?", MessageBoxButtons.YesNo);
+                        if (dialogResult == DialogResult.Yes)
+                        {
+                            File.WriteAllText(path, jsonGen);
+                        }
+
+                    }
                     else
-                        json = json + "\n" + VerifyToken(token[0]);
+                        File.WriteAllText(path, jsonGen);
                 }
-                catch
-                {
-                    MessageBox.Show("Clave incorrecta.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+
+
             }
-            json = json + "\n]";
-            rTxtResult.Text = json;
-            if (File.Exists(path))
+            catch (Exception)
             {
-                DialogResult dialogResult = MessageBox.Show("El archivo ya existe", "¿Desea reemplazarlo?", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
-                {
-                    File.WriteAllText(path, json);
-                }
+                //MessageBox.Show("Lo sentimos, ha ocurrido un error inesperado al tratar de generar el archivo.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }
-            else
-                File.WriteAllText(path, json);
-
-
         }
 
         private void GenerateJWT()
         {
             clients = new List<Client>();
-            string path = txtDestinyRoute.Text + @"\JWTGenerated.txt";
+            string path = txtDestinyRoute.Text + @"\JsonJwtGenerated.json";
             for (int i = 0; i < fileLines.Length; i++)
             {
                 var att = fileLines[i].Split(cmbDeli.Text);
@@ -171,15 +206,15 @@ namespace ARIProject
 
             }
 
-            var json = "";
+            var json = "[";
             foreach (Client client in clients)
             {
-                // json = json + ",\n" + JsonSerializer.Serialize(client, options);
-                if (json != "")
-                    json = json + cmbDeli.Text + "\n" + GenerateAccessToken(client);
+                if (json != "[")
+                    json = json + "\n,{\"cliente\": \"" + GenerateAccessToken(client) + "\"}";
                 else
-                    json = json + GenerateAccessToken(client);
+                    json = json + "\n{\"cliente\": \"" + GenerateAccessToken(client) + "\"}";
             }
+            json = json + "\n]";
             rTxtResult.Text = json;
             Console.WriteLine(path);
             if (File.Exists(path))
