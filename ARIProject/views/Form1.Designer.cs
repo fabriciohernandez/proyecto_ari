@@ -30,6 +30,7 @@ namespace ARIProject
         private void InitializeComponent()
         {
             this.body = new System.Windows.Forms.Panel();
+            this.label3 = new System.Windows.Forms.Label();
             this.lblTitleKey = new System.Windows.Forms.Label();
             this.txtKey = new System.Windows.Forms.TextBox();
             this.btnGen = new System.Windows.Forms.Button();
@@ -54,6 +55,7 @@ namespace ARIProject
             // body
             // 
             this.body.AutoScroll = true;
+            this.body.Controls.Add(this.label3);
             this.body.Controls.Add(this.lblTitleKey);
             this.body.Controls.Add(this.txtKey);
             this.body.Controls.Add(this.btnGen);
@@ -75,8 +77,19 @@ namespace ARIProject
             this.body.Dock = System.Windows.Forms.DockStyle.Fill;
             this.body.Location = new System.Drawing.Point(0, 0);
             this.body.Name = "body";
-            this.body.Size = new System.Drawing.Size(450, 445);
+            this.body.Size = new System.Drawing.Size(459, 452);
             this.body.TabIndex = 0;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label3.ForeColor = System.Drawing.Color.White;
+            this.label3.Location = new System.Drawing.Point(12, 1035);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(48, 17);
+            this.label3.TabIndex = 29;
+            this.label3.Text = "Space";
             // 
             // lblTitleKey
             // 
@@ -92,7 +105,7 @@ namespace ARIProject
             // 
             this.txtKey.Location = new System.Drawing.Point(12, 581);
             this.txtKey.Name = "txtKey";
-            this.txtKey.Size = new System.Drawing.Size(405, 23);
+            this.txtKey.Size = new System.Drawing.Size(418, 23);
             this.txtKey.TabIndex = 27;
             // 
             // btnGen
@@ -100,7 +113,7 @@ namespace ARIProject
             this.btnGen.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.btnGen.Location = new System.Drawing.Point(11, 626);
             this.btnGen.Name = "btnGen";
-            this.btnGen.Size = new System.Drawing.Size(406, 40);
+            this.btnGen.Size = new System.Drawing.Size(419, 40);
             this.btnGen.TabIndex = 26;
             this.btnGen.Text = "Generar";
             this.btnGen.UseVisualStyleBackColor = true;
@@ -125,7 +138,7 @@ namespace ARIProject
             ":"});
             this.cmbDeli.Location = new System.Drawing.Point(11, 525);
             this.cmbDeli.Name = "cmbDeli";
-            this.cmbDeli.Size = new System.Drawing.Size(406, 23);
+            this.cmbDeli.Size = new System.Drawing.Size(419, 23);
             this.cmbDeli.TabIndex = 24;
             // 
             // lblTitleFileType
@@ -148,7 +161,7 @@ namespace ARIProject
             "XML"});
             this.cmbFileType.Location = new System.Drawing.Point(11, 467);
             this.cmbFileType.Name = "cmbFileType";
-            this.cmbFileType.Size = new System.Drawing.Size(406, 23);
+            this.cmbFileType.Size = new System.Drawing.Size(419, 23);
             this.cmbFileType.TabIndex = 22;
             this.cmbFileType.SelectedIndexChanged += new System.EventHandler(this.cmbFileType_SelectedIndexChanged);
             // 
@@ -167,7 +180,7 @@ namespace ARIProject
             this.rTxtResult.Location = new System.Drawing.Point(12, 707);
             this.rTxtResult.Name = "rTxtResult";
             this.rTxtResult.ReadOnly = true;
-            this.rTxtResult.Size = new System.Drawing.Size(405, 311);
+            this.rTxtResult.Size = new System.Drawing.Size(418, 311);
             this.rTxtResult.TabIndex = 19;
             this.rTxtResult.Text = "";
             // 
@@ -176,7 +189,7 @@ namespace ARIProject
             this.fileContent.Location = new System.Drawing.Point(12, 164);
             this.fileContent.Name = "fileContent";
             this.fileContent.ReadOnly = true;
-            this.fileContent.Size = new System.Drawing.Size(405, 208);
+            this.fileContent.Size = new System.Drawing.Size(418, 208);
             this.fileContent.TabIndex = 18;
             this.fileContent.Text = "";
             // 
@@ -185,7 +198,7 @@ namespace ARIProject
             this.btnDestinySearchRoute.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.btnDestinySearchRoute.Location = new System.Drawing.Point(342, 410);
             this.btnDestinySearchRoute.Name = "btnDestinySearchRoute";
-            this.btnDestinySearchRoute.Size = new System.Drawing.Size(75, 23);
+            this.btnDestinySearchRoute.Size = new System.Drawing.Size(88, 23);
             this.btnDestinySearchRoute.TabIndex = 17;
             this.btnDestinySearchRoute.Text = "Buscar";
             this.btnDestinySearchRoute.UseVisualStyleBackColor = true;
@@ -204,9 +217,9 @@ namespace ARIProject
             this.btnOriginSearchRoute.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.btnOriginSearchRoute.Location = new System.Drawing.Point(342, 124);
             this.btnOriginSearchRoute.Name = "btnOriginSearchRoute";
-            this.btnOriginSearchRoute.Size = new System.Drawing.Size(75, 23);
+            this.btnOriginSearchRoute.Size = new System.Drawing.Size(88, 23);
             this.btnOriginSearchRoute.TabIndex = 15;
-            this.btnOriginSearchRoute.Text = "Buscar";
+            this.btnOriginSearchRoute.Text = "Seleccionar";
             this.btnOriginSearchRoute.UseVisualStyleBackColor = true;
             this.btnOriginSearchRoute.Click += new System.EventHandler(this.btnOriginSearchRoute_Click);
             // 
@@ -263,7 +276,7 @@ namespace ARIProject
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(450, 445);
+            this.ClientSize = new System.Drawing.Size(459, 452);
             this.Controls.Add(this.body);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "Form1";
@@ -296,6 +309,7 @@ namespace ARIProject
         private System.Windows.Forms.ComboBox cmbDeli;
         private System.Windows.Forms.Label lblTitleKey;
         private System.Windows.Forms.TextBox txtKey;
+        private System.Windows.Forms.Label label3;
     }
 }
 

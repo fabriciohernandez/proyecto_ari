@@ -9,7 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
+using System.Xml;
 
 namespace ARIProject
 {
@@ -28,7 +28,7 @@ namespace ARIProject
             lblResultTitle.Text = "Resultado " + cmbFileType.Text;
 
             var fileType = Tools.GetFileType(txtOriginRoute.Text);
-            if(fileType.Equals("json") && cmbFileType.Text.Equals("TXT"))
+            if (fileType.Equals("json") && cmbFileType.Text.Equals("TXT"))
             {
                 txtKey.Text = "No necesaria";
                 txtKey.Enabled = false;
@@ -57,7 +57,8 @@ namespace ARIProject
                     //Clean all fields
                     ClearAllFields();
                     var fileType = Tools.GetFileType(selectedFile);
-                    if (fileType.Equals("txt")) {
+                    if (fileType.Equals("txt"))
+                    {
                         cmbFileType.Items.Remove("TXT");
                         cmbFileType.Items.Remove("JSON");
                     }
@@ -65,8 +66,6 @@ namespace ARIProject
                     {
                         cmbFileType.Text = "TXT";
                         cmbFileType.Enabled = false;
-                        txtKey.Text = "No necesaria";
-                        txtKey.Enabled = false;
                     }
                     else if (fileType.Equals("json"))
                     {
@@ -114,7 +113,7 @@ namespace ARIProject
                         {
                             GenerateJWT();
                         }
-                        else if(cmbFileType.Text.Equals("XML"))
+                        else if (cmbFileType.Text.Equals("XML"))
                         {
                             GenerateXML();
                         }
@@ -122,12 +121,12 @@ namespace ARIProject
                     case "json":
                         if (cmbFileType.Text.Equals("JSON"))
                         {
-                            GenerateJSONByJwT();                       
+                            GenerateJSONByJwT();
                         }
                         if (cmbFileType.Text.Equals("TXT"))
                         {
                             GenerateTxtByJson();
-                        }                     
+                        }
                         break;
                     case "xml":
                         GenerateTxtByXml();
@@ -269,8 +268,59 @@ namespace ARIProject
 
         private void GenerateXML()
         {
-            //TO DO
-            MessageBox.Show("Pendiente de implementacion GenerateXML", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            try
+            {
+                clients = new List<Client>();
+                for (int i = 0; i < fileLines.Length; i++)
+                {
+                    var att = fileLines[i].Split(cmbDeli.Text);
+                    clients.Add(new Client(att[0], att[1], att[2], att[3], att[4], att[5]));
+
+                }
+
+                XmlTextWriter textWriter = new XmlTextWriter(txtDestinyRoute.Text + "/XMLGenerated.xml", null);
+                textWriter.WriteStartDocument();
+                textWriter.WriteStartElement("clientes");
+                foreach (var item in clients)
+                {
+                    textWriter.WriteStartElement("cliente");
+                    textWriter.WriteStartElement("documento");
+                    textWriter.WriteString(item.documento);
+                    textWriter.WriteEndElement();
+                    textWriter.WriteStartElement("primer-nombre");
+                    textWriter.WriteString(item.primer_nombre);
+                    textWriter.WriteEndElement();
+                    textWriter.WriteStartElement("apellido");
+                    textWriter.WriteString(item.apellido);
+                    textWriter.WriteEndElement();
+                    textWriter.WriteStartElement("credit-card");
+                    textWriter.WriteString(new string(VigenereEncode(item.credit_card, txtKey.Text)));
+                    textWriter.WriteEndElement();
+                    textWriter.WriteStartElement("tipo");
+                    textWriter.WriteString(item.tipo);
+                    textWriter.WriteEndElement();
+                    textWriter.WriteStartElement("telefono");
+                    textWriter.WriteString(item.telefono);
+                    textWriter.WriteEndElement();
+                    textWriter.WriteEndElement();
+                }
+                textWriter.WriteEndDocument();
+                textWriter.Close();
+
+                fileLines = File.ReadAllLines(txtDestinyRoute.Text + "/XMLGenerated.xml");
+                for (int i = 0; i < fileLines.Length; i++)
+                {
+                    rTxtResult.Text = rTxtResult.Text + fileLines[i] + "\n";
+                }
+
+                MessageBox.Show("Arhivo XML generado exitosamente.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Ha ocurrido un error al tratar de generar el archivo XML.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+
         }
 
         private void GenerateTxtByJson()
@@ -343,8 +393,83 @@ namespace ARIProject
 
         private void GenerateTxtByXml()
         {
-            //TO DO
-            MessageBox.Show("Pendiente de implementacion GenerateTxtByXml", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            try
+            {
+                clients.Clear();
+                XmlReaderSettings settings = new XmlReaderSettings();
+                settings.IgnoreWhitespace = true;
+                using (XmlReader reader = XmlReader.Create(txtOriginRoute.Text))
+                {
+                    reader.MoveToContent();
+                    while (reader.Read())
+                    {
+                        reader.MoveToContent();
+
+                    }
+                }
+
+             
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml("");
+                string jsonText = Soft.JsonConvert.SerializeXmlNode(doc);
+                clients = Soft.JsonConvert.DeserializeObject<List<Client>>(jsonText);
+
+                //Creating file
+                if (File.Exists(txtDestinyRoute.Text + "/GeneratedXmlToTxt.txt"))
+                {
+                    DialogResult dialogResult = MessageBox.Show("El archivo ya ha sido generado con anterioridad en la misma ruta ¿desea reemplazarlo?", "Advertencia", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        File.Delete(txtDestinyRoute.Text);
+                    }
+                    else
+                    {
+                        Random _random = new Random();
+                        txtDestinyRoute.Text = Tools.RemoveFileExtension(txtDestinyRoute.Text);
+                        txtDestinyRoute.Text += _random.Next(1, 1000) + ".txt";
+                    }
+
+                }
+
+                // Create a new file     
+                using (FileStream fs = File.Create(txtDestinyRoute.Text))
+                {
+                    // Add some text to file    
+                    foreach (Client element in clients)
+                    {
+                        String clientText = element.documento
+                            + cmbDeli.Text
+                            + element.primer_nombre
+                            + cmbDeli.Text
+                            + element.apellido
+                            + cmbDeli.Text
+                            + element.credit_card
+                            + cmbDeli.Text
+                            + element.tipo
+                            + cmbDeli.Text
+                            + element.telefono
+                            + "\n";
+
+                        Byte[] text = new UTF8Encoding(true).GetBytes(clientText);
+                        fs.Write(text, 0, text.Length);
+
+                    }
+                }
+
+                MessageBox.Show("Archivo generado exitosamente y se ha guardado en: " + txtDestinyRoute.Text, "Exito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                fileLines = File.ReadAllLines(txtDestinyRoute.Text + "/GeneratedXmlToTxt.txt");
+                for (int i = 0; i < fileLines.Length; i++)
+                {
+                    rTxtResult.Text = rTxtResult.Text + fileLines[i] + "\n";
+                }
+                ClearAllFields();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Ha ocurrido un errro al tratar de generar un txt a partir de un xml.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+
         }
 
         private bool ValidateEntrys()
@@ -406,6 +531,96 @@ namespace ARIProject
             cmbFileType.Items.Add("JWT");
             cmbFileType.Items.Add("TXT");
             cmbFileType.Items.Add("XML");
+        }
+
+        public char[] VigenereEncode(String msg, String key)
+        {
+            char[,] matrix;
+            char[] message = msg.ToCharArray();
+            char[] tempKey = key.ToCharArray();
+            char[] charKey = new char[message.Length];
+            int cont = 0;
+
+            //For mete la clave multiples veces en 1 arreglo
+            for (int i = 0; i < message.Length; i++)
+            {
+                charKey[i] = tempKey[cont];
+                cont++;
+                if (cont == tempKey.Length)
+                    cont = 0;
+            }
+            //la clave ya se guardo en un arreglo de igual tamaño que del mensaje
+            //Generamos matriz del abecedario
+            matrix = GenMatrixNum();
+            //ciframos el texto
+            return Encode(message, charKey, matrix);
+        }
+
+        public char[] Encode(char[] charMsg, char[] charKey, char[,] matrix)
+        {
+            int i, j;
+            char[] encryption;
+
+            encryption = new char[charMsg.Length];
+            for (int cont = 0; cont < charMsg.Length; cont++)
+            {
+                i = (int)charMsg[cont] - 48;
+                j = (int)charKey[cont] - 48;
+                encryption[cont] = matrix[i, j];
+
+            }
+            return encryption;
+        }
+
+        public char[] Decode(char[] message, char[] key)
+        {
+            char[] decoded = new char[message.Length];
+            for (int cont = 0; cont < message.Length; cont++)
+            {
+                int aux = (message[cont] - key[cont]);
+                if (aux < 0)
+                {
+                    aux += 10 * 1;
+                }
+                decoded[cont] = (char)(aux + 48);
+
+            }
+            return decoded;
+        }
+
+        private char[,] GenMatrixNum()
+        {
+            int contador;
+            char[] abcTemp = GenArrayNum();
+            char[] abc = new char[abcTemp.Length * 2];
+
+            for (int c = 0; c < 10; c++)
+            {
+                abc[c] = abcTemp[c];
+                abc[c + 10] = abcTemp[c];
+            }
+            char[,] matriz = new char[10, 10];
+            for (int i = 0; i < 10; i++)
+            {
+                contador = 0;
+                for (int j = 0; j < 10; j++)
+                {
+                    matriz[i, j] = abc[contador + i];
+                    contador++;
+                }
+            }
+            return matriz;
+        }
+
+        private char[] GenArrayNum()
+        {
+            char[] abc = new char[10];
+
+            for (int i = 48; i <= 57; i++)
+            {
+                abc[i - 48] = (char)i;
+            }
+            return abc;
         }
     }
 }
