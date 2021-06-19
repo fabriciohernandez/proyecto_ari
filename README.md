@@ -34,6 +34,7 @@ a la mano).
 
 8. Una vez generado el archivo, podrá visualizar su contenido en pantalla.
 
+-> Si desea utilizar la version ejecutable, ésta se llama "ARIProject.exe"
+
 Esta versión es la última de momento, sin embargo no se descarta la posibilidad que pueda 
 ser actualizado y mejorado en un futuro.
-
