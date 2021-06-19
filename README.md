@@ -41,7 +41,7 @@ ser actualizado y mejorado en un futuro.
 
 Integrantes:
 
-Fabricio Enrique Hernández López 	00163217
-José David Mejía Segura 			00001617
-Luis Eduardo Cortez Murillo 			00029117
+Fabricio Enrique Hernández López 	00163217 <br/> 
+José David Mejía Segura 			00001617<br/>
+Luis Eduardo Cortez Murillo 			00029117<br/>
 Miguel Ernesto González Yanes 		00145016
