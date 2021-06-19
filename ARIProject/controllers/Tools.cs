@@ -7,8 +7,8 @@ namespace ARIProject.controllers
         //Return the fileType of a Route String
         internal static String GetFileType(String route)
         {
-            var extension = System.IO.Path.GetExtension(route);        
-            return extension.TrimStart('.'); 
+            var extension = System.IO.Path.GetExtension(route);
+            return extension.TrimStart('.');
         }
 
         //Remove the extension of a Route
@@ -17,5 +17,7 @@ namespace ARIProject.controllers
             var splitString = route.Split('.');
             return splitString[0];
         }
+
+        
     }
 }
