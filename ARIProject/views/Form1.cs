@@ -18,6 +18,12 @@ namespace ARIProject
         private List<Client> clients = new List<Client>();
         string[] fileLines;
 
+        char[] mensaje;
+        char[] clave;
+        char[] resultado; //resultado cifrado
+        char[,] matriz;
+        char[] cifrado;
+
 
         public Form1()
         {
@@ -167,7 +173,8 @@ namespace ARIProject
             for (int i = 0; i < fileLines.Length; i++)
             {
                 var att = fileLines[i].Split(cmbDeli.Text);
-                clients.Add(new Client(att[0], att[1], att[2], att[3], att[4], att[5]));
+                VigenereCifrado(att[3], txtKey.Text);
+                clients.Add(new Client(att[0], att[1], att[2], new string(resultado), att[4], att[5]));
 
             }
 
@@ -356,6 +363,81 @@ namespace ARIProject
             cmbFileType.Enabled = true;
         }
 
+        private void fileContent_TextChanged(object sender, EventArgs e)
+        {
 
+        }
+        public void VigenereCifrado(String msg, String clave)
+        {
+
+            mensaje = msg.ToCharArray();
+            char[] claveTemp = clave.ToCharArray();
+            this.clave = new char[mensaje.Length];
+            int cont = 0;
+
+            //For mete la clave multiples veces en 1 arreglo
+            for (int i = 0; i < mensaje.Length; i++)
+            {
+                this.clave[i] = claveTemp[cont];
+                cont++;
+                if (cont == claveTemp.Length)
+                    cont = 0;
+            }
+            //la clave ya se guardo en un arreglo de igual tamaño que del mensaje
+
+            this.matriz = generarMatrizNum();//Generamos matriz del abecedarioç
+            cifrar(); //ciframos el texto
+        }
+
+        public void cifrar()
+        {
+            // string palabra = "4567467811114";
+            cifrado = new char[mensaje.Length];
+            int i;
+            int j;
+            for (int cont = 0; cont < mensaje.Length; cont++)
+            {
+                i = (int)mensaje[cont] - 48;
+                j = (int)clave[cont] - 48;
+                cifrado[cont] = matriz[i, j];
+
+            }
+
+            resultado = cifrado;
+        }
+        private char[,] generarMatrizNum()
+        {
+            int contador;
+            char[] abcTemp = generarArrayNumeros();
+            char[] abc = new char[abcTemp.Length * 2];
+
+            for (int c = 0; c < 10; c++)
+            {
+                abc[c] = abcTemp[c];
+                abc[c + 10] = abcTemp[c];
+            }
+            char[,] matriz = new char[10, 10];
+            for (int i = 0; i < 10; i++)
+            {
+                contador = 0;
+                for (int j = 0; j < 10; j++)
+                {
+                    matriz[i, j] = abc[contador + i];
+                    contador++;
+                }
+            }
+            return matriz;
+        }
+
+        private char[] generarArrayNumeros()
+        {
+            char[] abc = new char[10];
+
+            for (int i = 48; i <= 57; i++)
+            {
+                abc[i - 48] = (char)i;
+            }
+            return abc;
+        }
     }
 }

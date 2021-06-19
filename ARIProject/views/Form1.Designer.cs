@@ -179,6 +179,7 @@ namespace ARIProject
             this.fileContent.Size = new System.Drawing.Size(405, 208);
             this.fileContent.TabIndex = 18;
             this.fileContent.Text = "";
+            this.fileContent.TextChanged += new System.EventHandler(this.fileContent_TextChanged);
             // 
             // btnDestinySearchRoute
             // 
